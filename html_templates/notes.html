@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+<header class="main-header border-bottom">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'users:dashboard' %}}">Jarlis_</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="#">Contacts</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Notes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">File Manager</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Daily News</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a href="#" class="nav-link link-dark">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+<main class="mt-5 mb-5">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col">
+                <h1 class="card-title h3">Notes List</h1>
+            </div>
+            <div class="col text-end">
+                <a href="add-note.html" class="btn btn-primary">Add note</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4">Note title</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum nobis perferendis placeat
+                            soluta voluptatem. Dignissimos maxime minus nobis quasi voluptatibus.</p>
+                        <p class="mb-0 mt-3"><a href="#" class="btn btn-sm btn-outline-dark">Read more</a></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 1</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 2</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 3</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 4</a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4">Note title</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum nobis perferendis placeat
+                            soluta voluptatem. Dignissimos maxime minus nobis quasi voluptatibus.</p>
+                        <p class="mb-0 mt-3"><a href="#" class="btn btn-sm btn-outline-dark">Read more</a></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 1</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 2</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 3</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 4</a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4">Note title</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum nobis perferendis placeat
+                            soluta voluptatem. Dignissimos maxime minus nobis quasi voluptatibus.</p>
+                        <p class="mb-0 mt-3"><a href="#" class="btn btn-sm btn-outline-dark">Read more</a></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 1</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 2</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 3</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 4</a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4">Note title</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum nobis perferendis placeat
+                            soluta voluptatem. Dignissimos maxime minus nobis quasi voluptatibus.</p>
+                        <p class="mb-0 mt-3"><a href="#" class="btn btn-sm btn-outline-dark">Read more</a></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 1</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 2</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 3</a>
+                        <a href="#" class="badge btn btn-sm btn-primary">Tag 4</a>
+                    </div>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination  mb-5">
+                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="h4 m-0">Search Notes</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="#" method="get">
+                            <div class="d-flex gap-2">
+                                <input type="search" class="form-control" id="search" placeholder="Note title">
+                                <button class="btn btn-sm btn-primary" type="submit">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="h4 m-0">Tags List</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled m-0">
+                            <li><a href="#" class="badge btn btn-primary">Tag 1</a></li>
+                            <li><a href="#" class="badge btn btn-primary">Tag 2</a></li>
+                            <li><a href="#" class="badge btn btn-primary">Tag 3</a></li>
+                            <li><a href="#" class="badge btn btn-primary">Tag 4</a></li>
+                            <li><a href="#" class="badge btn btn-primary">Tag 5</a></li>
+                            <li><a href="#" class="badge btn btn-primary">Tag 6</a></li>
+                            <li><a href="#" class="badge btn btn-primary">Tag 7</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+</html>
