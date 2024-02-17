@@ -1,0 +1,94 @@
+[[package]]
+name = "asgiref"
+version = "3.7.2"
+description = "ASGI specs, helper code, and adapters"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+typing-extensions = {version = ">=4", markers = "python_version < \"3.11\""}
+
+[package.extras]
+tests = ["pytest", "pytest-asyncio", "mypy (>=0.800)"]
+
+[[package]]
+name = "django"
+version = "5.0.2"
+description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
+category = "main"
+optional = false
+python-versions = ">=3.10"
+
+[package.dependencies]
+asgiref = ">=3.7.0,<4"
+sqlparse = ">=0.3.1"
+tzdata = {version = "*", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+argon2 = ["argon2-cffi (>=19.1.0)"]
+bcrypt = ["bcrypt"]
+
+[[package]]
+name = "django-environ"
+version = "0.11.2"
+description = "A package that allows you to utilize 12factor inspired environment variables to configure your Django application."
+category = "main"
+optional = false
+python-versions = ">=3.6,<4"
+
+[package.extras]
+develop = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)", "furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
+docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
+testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
+
+[[package]]
+name = "psycopg2-binary"
+version = "2.9.9"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "sqlparse"
+version = "0.4.4"
+description = "A non-validating SQL parser."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+dev = ["flake8", "build"]
+doc = ["sphinx"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
+name = "typing-extensions"
+version = "4.9.0"
+description = "Backported and Experimental Type Hints for Python 3.8+"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
+name = "tzdata"
+version = "2024.1"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.10"
+content-hash = "ab7cea59619b650556c2be986f050c1fa67d7e97d71e90c18057abb60d7e300d"
+
+[metadata.files]
+asgiref = []
+django = []
+django-environ = []
+psycopg2-binary = []
+sqlparse = []
+typing-extensions = []
+tzdata = []
