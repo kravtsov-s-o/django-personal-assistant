@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "Personal Assistant - Jarlis_"
+version = "0.0.1"
+description = "Command project"
+authors = ["group-3"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.0.2"
+psycopg2-binary = "^2.9.9"
+django-environ = "^0.11.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
