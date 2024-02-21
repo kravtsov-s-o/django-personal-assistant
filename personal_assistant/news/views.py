@@ -1,0 +1,105 @@
+from django.shortcuts import render
+import asyncio
+from datetime import datetime, timedelta
+import environ
+from pathlib import Path
+import httpx
+from django.http import JsonResponse
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / '.env')
+
+CURRENT_DATE = datetime.now()  # поточна дата як об'єкт datetime
+CURRENT_DATE_STR = CURRENT_DATE.strftime("%d.%m.%Y")  # Переводимо дату в стрінгу в форматі дд.мм.рррр
+PRIVAT_URL = f"https://api.privatbank.ua/p24api/exchange_rates?date={CURRENT_DATE_STR}"
+WAR_STATISTICS_URL = "https://russianwarship.rip/api/v2/statistics/latest"
+NEWS_DAYS = 2  # Кількість днів за які беремо новини
+"""
+Дата для лінки на новини, беремо з запасом кілька днів, так як за останній день можуть не виставити ні однієї новини, 
+це все ж таки не 1+1
+"""
+NEWS_DATE = CURRENT_DATE - timedelta(days=NEWS_DAYS)
+CURRENT_DATE_STR_NEWS = NEWS_DATE.strftime("%Y-%m-%d")  # Переводимо дату в стрінгу в форматі рррр-мм-дд
+NEWS_TO_SHOW = 5  # Кількість новин які показувати користувачу
+NEWSAPI_URL = (f"https://newsapi.org/v2/everything?q=Apple&from={NEWS_DATE}&"
+               f"sortBy=popularity&apiKey={env('NEWSAPI_API_KEY')}")
+
+
+async def fetch_data(url):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        return response.json()
+
+
+async def get_data_from_apis(urls):
+    tasks = [fetch_data(url) for url in urls]
+    results = await asyncio.gather(*tasks)
+    return results
+
+
+async def news_view(request):
+    urls = [PRIVAT_URL, WAR_STATISTICS_URL, NEWSAPI_URL]
+    raw_data = await get_data_from_apis(urls)
+    war_stats = raw_data[1]["data"]["stats"]
+    war_stats_increase = raw_data[1]["data"]["increase"]
+    news_articles = raw_data[2]["articles"][::-1]
+    view_data = {'Date': raw_data[0]['date'],
+                 'Bank': 'PrivatBank',
+                 'Exchange rate': [{'currency': 'USD',
+                                    'sale': next(rate["saleRate"] for rate in raw_data[0]["exchangeRate"] if
+                                                 rate["currency"] == 'USD'),
+                                    'purchase': next(rate["purchaseRate"] for rate in raw_data[0]["exchangeRate"] if
+                                                     rate["currency"] == 'USD')},
+                                   {'currency': 'EUR',
+                                    'sale': next(rate["saleRate"] for rate in raw_data[0]["exchangeRate"] if
+                                                 rate["currency"] == 'EUR'),
+                                    'purchase': next(rate["purchaseRate"] for rate in raw_data[0]["exchangeRate"] if
+                                                     rate["currency"] == 'EUR')},
+                                   {'currency': 'PLN',
+                                    'sale': next(rate["saleRate"] for rate in raw_data[0]["exchangeRate"] if
+                                                 rate["currency"] == 'PLN'),
+                                    'purchase': next(rate["purchaseRate"] for rate in raw_data[0]["exchangeRate"] if
+                                                     rate["currency"] == 'PLN')}],
+                 'War day': raw_data[1]["data"]["day"],
+                 'Occupants loses': {'personnel_units': war_stats["personnel_units"],
+                                     'tanks': war_stats["tanks"],
+                                     'armoured_fighting_vehicles': war_stats["armoured_fighting_vehicles"],
+                                     'artillery_systems': war_stats["artillery_systems"],
+                                     'mlrs': war_stats["mlrs"],
+                                     'aa_warfare_systems': war_stats["aa_warfare_systems"],
+                                     'planes': war_stats["planes"],
+                                     'helicopters': war_stats["helicopters"],
+                                     'vehicles_fuel_tanks"': war_stats["vehicles_fuel_tanks"],
+                                     'warships_cutters': war_stats["warships_cutters"],
+                                     'cruise_missiles': war_stats["cruise_missiles"],
+                                     'uav_systems': war_stats["uav_systems"],
+                                     'special_military_equip': war_stats["special_military_equip"],
+                                     'submarines': war_stats["submarines"]},
+                 'Increase by day': {'personnel_units': war_stats_increase["personnel_units"],
+                                     'tanks': war_stats_increase["tanks"],
+                                     'armoured_fighting_vehicles': war_stats_increase[
+                                         "armoured_fighting_vehicles"],
+                                     'artillery_systems': war_stats_increase["artillery_systems"],
+                                     'mlrs': war_stats_increase["mlrs"],
+                                     'aa_warfare_systems': war_stats_increase["aa_warfare_systems"],
+                                     'planes': war_stats_increase["planes"],
+                                     'helicopters': war_stats_increase["helicopters"],
+                                     'vehicles_fuel_tanks': war_stats_increase["vehicles_fuel_tanks"],
+                                     'warships_cutters': war_stats_increase["warships_cutters"],
+                                     'cruise_missiles': war_stats_increase["cruise_missiles"],
+                                     'uav_systems': war_stats_increase["uav_systems"],
+                                     'special_military_equip': war_stats_increase["special_military_equip"],
+                                     'submarines': war_stats_increase["submarines"]},
+                 'News': [{"source": news_articles[i]["source"]["name"],
+                           "author": news_articles[i]["author"],
+                           "title": news_articles[i]["title"],
+                           "description": news_articles[i]["description"],
+                           "link to source": news_articles[i]["url"],
+                           "publishedAt": news_articles[i]["publishedAt"],
+                           "content": news_articles[i]["content"]} for i in range(NEWS_TO_SHOW)]
+                 }
+
+    # return render(request, 'news.html', {'data': view_data})
+    return JsonResponse(view_data, safe=False)
