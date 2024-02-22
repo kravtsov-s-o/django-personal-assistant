@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uploaded Files</title>
+</head>
+<body>
+    <h1>Uploaded Files</h1>
+    <ul>
+    {% for file_name in file_names %}
+        <li>
+            {{ file_name }}
+            <form action="{% url 'filemanager:download_file' file_name %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Download</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
