@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 import asyncio
 from datetime import datetime, timedelta
 import environ
@@ -39,6 +40,7 @@ async def get_data_from_apis(urls):
     return results
 
 
+@login_required(login_url='/signin/')
 async def news_view(request):
     urls = [PRIVAT_URL, WAR_STATISTICS_URL, NEWSAPI_URL]
     raw_data = await get_data_from_apis(urls)
