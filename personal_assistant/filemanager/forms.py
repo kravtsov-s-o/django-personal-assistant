@@ -6,8 +6,8 @@ class FileUploadForm(forms.ModelForm):
         model = File
         fields = ['file', 'category']
 
-
-""" class CategoryForm(forms.ModelForm):
+""" 
+class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name'] """

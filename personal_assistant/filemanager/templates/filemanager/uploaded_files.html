@@ -10,9 +10,8 @@
     {% for file_name in file_names %}
         <li>
             {{ file_name }}
-            <form action="{% url 'filemanager:download_file' file_name %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit">Download</button>
+            
+            <a href="{% url 'filemanager:download_file' file_name %}">{{file_name}}</a>
             </form>
         </li>
     {% endfor %}
