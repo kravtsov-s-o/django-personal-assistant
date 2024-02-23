@@ -47,7 +47,7 @@ async def news_view(request):
     news_articles = raw_data[2]["articles"][::-1]
     view_data = {'Date': raw_data[0]['date'],
                  'Bank': 'PrivatBank',
-                 'Exchange rate': [{'currency': 'USD',
+                 'Exchange_rate': [{'currency': 'USD',
                                     'sale': next(rate["saleRate"] for rate in raw_data[0]["exchangeRate"] if
                                                  rate["currency"] == 'USD'),
                                     'purchase': next(rate["purchaseRate"] for rate in raw_data[0]["exchangeRate"] if
@@ -62,44 +62,44 @@ async def news_view(request):
                                                  rate["currency"] == 'PLN'),
                                     'purchase': next(rate["purchaseRate"] for rate in raw_data[0]["exchangeRate"] if
                                                      rate["currency"] == 'PLN')}],
-                 'War day': raw_data[1]["data"]["day"],
-                 'Occupants loses': {'personnel_units': war_stats["personnel_units"],
+                 'War_day': raw_data[1]["data"]["day"],
+                 'Occupants_loses': {'personnel units': war_stats["personnel_units"],
                                      'tanks': war_stats["tanks"],
-                                     'armoured_fighting_vehicles': war_stats["armoured_fighting_vehicles"],
-                                     'artillery_systems': war_stats["artillery_systems"],
+                                     'armoured fighting vehicles': war_stats["armoured_fighting_vehicles"],
+                                     'artillery systems': war_stats["artillery_systems"],
                                      'mlrs': war_stats["mlrs"],
-                                     'aa_warfare_systems': war_stats["aa_warfare_systems"],
+                                     'aa warfare systems': war_stats["aa_warfare_systems"],
                                      'planes': war_stats["planes"],
                                      'helicopters': war_stats["helicopters"],
-                                     'vehicles_fuel_tanks"': war_stats["vehicles_fuel_tanks"],
-                                     'warships_cutters': war_stats["warships_cutters"],
-                                     'cruise_missiles': war_stats["cruise_missiles"],
-                                     'uav_systems': war_stats["uav_systems"],
-                                     'special_military_equip': war_stats["special_military_equip"],
+                                     'vehicles fuel tanks"': war_stats["vehicles_fuel_tanks"],
+                                     'warships cutters': war_stats["warships_cutters"],
+                                     'cruise missiles': war_stats["cruise_missiles"],
+                                     'uav systems': war_stats["uav_systems"],
+                                     'special military equip': war_stats["special_military_equip"],
                                      'submarines': war_stats["submarines"]},
-                 'Increase by day': {'personnel_units': war_stats_increase["personnel_units"],
+                 'Increase_by_day': {'personnel units': war_stats_increase["personnel_units"],
                                      'tanks': war_stats_increase["tanks"],
-                                     'armoured_fighting_vehicles': war_stats_increase[
+                                     'armoured fighting vehicles': war_stats_increase[
                                          "armoured_fighting_vehicles"],
-                                     'artillery_systems': war_stats_increase["artillery_systems"],
+                                     'artillery systems': war_stats_increase["artillery_systems"],
                                      'mlrs': war_stats_increase["mlrs"],
-                                     'aa_warfare_systems': war_stats_increase["aa_warfare_systems"],
+                                     'aa warfare systems': war_stats_increase["aa_warfare_systems"],
                                      'planes': war_stats_increase["planes"],
                                      'helicopters': war_stats_increase["helicopters"],
-                                     'vehicles_fuel_tanks': war_stats_increase["vehicles_fuel_tanks"],
-                                     'warships_cutters': war_stats_increase["warships_cutters"],
-                                     'cruise_missiles': war_stats_increase["cruise_missiles"],
-                                     'uav_systems': war_stats_increase["uav_systems"],
-                                     'special_military_equip': war_stats_increase["special_military_equip"],
+                                     'vehicles fuel tanks': war_stats_increase["vehicles_fuel_tanks"],
+                                     'warships cutters': war_stats_increase["warships_cutters"],
+                                     'cruise missiles': war_stats_increase["cruise_missiles"],
+                                     'uav systems': war_stats_increase["uav_systems"],
+                                     'special military equip': war_stats_increase["special_military_equip"],
                                      'submarines': war_stats_increase["submarines"]},
                  'News': [{"source": news_articles[i]["source"]["name"],
                            "author": news_articles[i]["author"],
                            "title": news_articles[i]["title"],
                            "description": news_articles[i]["description"],
                            "link to source": news_articles[i]["url"],
-                           "publishedAt": news_articles[i]["publishedAt"],
-                           "content": news_articles[i]["content"]} for i in range(NEWS_TO_SHOW)]
+                           "publishedAt": news_articles[i]["publishedAt"]} for i in range(NEWS_TO_SHOW)]
                  }
 
-    # return render(request, 'news.html', {'data': view_data})
-    return JsonResponse(view_data, safe=False)
+    return render(request, 'news/index.html',
+                  context={'page_title': 'News and Statistics', 'data': view_data})
+    # return JsonResponse(view_data, safe=False)
