@@ -1,0 +1,18 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Categories</title>
+</head>
+<body>
+    <h1>Manage Categories</h1>
+    <ul>
+    {% for category in categories %}
+        <li>
+            {{ category.name }}
+            <a href="{% url 'filemanager:edit_category' category.id %}">Edit</a>
+            <a href="{% url 'filemanager:delete_category' category.id %}">Delete</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

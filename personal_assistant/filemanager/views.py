@@ -86,3 +86,17 @@ def delete_file(request, pk):
 
     return redirect('filemanager:uploaded_files')
 
+def manage_categories(request):
+    categories = Category.objects.all()
+    return render(request, 'filemanager/manage_categories.html', {'categories': categories})
+
+def edit_category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    # Логіка для редагування категорії
+    return redirect('filemanager:manage_categories')
+
+def delete_category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    category.delete()
+    return redirect('filemanager:manage_categories')
+
