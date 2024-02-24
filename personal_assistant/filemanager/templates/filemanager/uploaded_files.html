@@ -1,22 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Uploaded Files</title>
-</head>
-<body>
-    <h1>Uploaded Files</h1>
+{% extends 'users/base-template.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="card-title h3">{{ page_title }}</h1>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'filemanager:add_file' %}" class="btn btn-primary">Add file</a>
+    </div>
     <ul>
-    {% for file in files %}
-        <li>
-            {{ file.file.name }}
-            <a href="{% url 'filemanager:download_file' file.id %}">Download</a>
-            <form action="{% url 'filemanager:delete_file' file.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    {% endfor %}
+        <h2 class="h4 m-0">Your uploaded files</h2>
     </ul>
-</body>
-</html>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h4 m-0">Search File</h2>
+            </div>
+            <div class="card-body">
+                <form action="#" method="get">
+                    <div class="d-flex gap-2">
+                        <input type="search" class="form-control" id="search" placeholder="File name">
+                        <button class="btn btn-sm btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="h4">Categories</h2>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                        All files
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">Images</a>
+                    <a href="#" class="list-group-item list-group-item-action">Videos</a>
+                    <a href="#" class="list-group-item list-group-item-action">Audios</a>
+                    <a href="#" class="list-group-item list-group-item-action">Docs</a>
+                    <a href="#" class="list-group-item list-group-item-action">Other</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card mb-4">
+            <div class="card-body">
+                {% if files %}
+                <table class="table m-0">
+                    <thead>
+                    <tr>
+                        <th scope="col">File name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for file in files %}
+                    <tr>
+                        <td><a href="{% url 'filemanager:download_file' file.id %}" download="{{file.file.name}}">{{file.file.name}}</a></td>
+                        <td>Category</td>
+                        <td>
+                            <form action="{% url 'filemanager:delete_file' file.id %}" method="post"
+                                  style="display: inline;">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+                {% else %}
+                    <p class="h5 m-0">You don't have files. Upload one.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination m-0">
+                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
