@@ -1,0 +1,86 @@
+{% extends 'users/base-template.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="card-title h3">{{ page_title }}</h1>
+    </div>
+    <div class="col text-end">
+        <a href="add-contact.html" class="btn btn-primary">Add contact</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <form action="#" method="get">
+                    <div class="d-flex gap-2">
+                        <input type="search" class="form-control" id="search" placeholder="Find contact">
+                        <button class="btn btn-sm btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+            {% if contacts %}
+            <div class="card-body">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Birthday</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contact in contacts %}
+                        <tr class="text-center">
+                            <td class="text-start">{{contact.name}}</td>
+                            <td><a href="tel:{{contact.name}}">{{contact.phone}}</a></td>
+                            <td><a href="mailto:{{contact.email}}">{{contact.email}}</a></td>
+                            <td>{{contact.address}}</td>
+                            <td>{{ contact.birthday|date:"d.m.Y" }}</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-outline-primary">Edit</button>
+                                    <button type="button" class="btn btn-outline-danger">Delete</button>
+                                </div>
+                            </td>
+                        </tr> 
+                        {% endfor %}                        
+                    </tbody>
+                </table>
+            </div>
+            {% if contacts.paginator.num_pages > 1 %}
+            <div class="card-footer">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination m-0">
+                        {% if contacts.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ contacts.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+                        {% for number in page_range %}
+                        {% if number != contacts.number %}
+                        <li class="page-item"><a class="page-link" href="?page={{ number }}">{{ number }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link">{{ number }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if contacts.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="card-body"> List is empty. </div>
+        {% andif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
