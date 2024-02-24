@@ -13,6 +13,7 @@ urlpatterns = [
     path('manage_categories/', views.manage_categories, name='manage_categories'),
     path('edit_category/<int:category_id>/', views.edit_category, name='edit_category'),
     path('delete_category/<int:category_id>/', views.delete_category, name='delete_category'),
+    path('edit_file/<int:file_id>/', views.edit_file, name='edit_file'),
    
     
 ] 

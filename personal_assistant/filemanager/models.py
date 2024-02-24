@@ -11,7 +11,7 @@ class Category(models.Model):
     
 class File(models.Model):
     file = models.FileField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=None)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     url = models.URLField(blank=True)
 

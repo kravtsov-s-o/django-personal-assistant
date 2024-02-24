@@ -10,9 +10,6 @@
     <div class="col text-end">
         <a href="{% url 'filemanager:add_file' %}" class="btn btn-primary">Add file</a>
     </div>
-    <ul>
-        <h2 class="h4 m-0">Your uploaded files</h2>
-    </ul>
 </div>
 <div class="row">
     <div class="col-md-3">
@@ -64,13 +61,14 @@
                     {% for file in files %}
                     <tr>
                         <td><a href="{% url 'filemanager:download_file' file.id %}" download="{{file.file.name}}">{{file.file.name}}</a></td>
-                        <td>Category</td>
+                        <td>{{file.category}}</td>
                         <td>
                             <form action="{% url 'filemanager:delete_file' file.id %}" method="post"
                                   style="display: inline;">
                                 {% csrf_token %}
                                 <button class="btn btn-sm btn-danger" type="submit">Delete</button>
                             </form>
+                            <a href="{% url 'filemanager:edit_file' file.id %}" class="btn btn-sm btn-primary">Edit</a>
                         </td>
                     </tr>
                     {% endfor %}

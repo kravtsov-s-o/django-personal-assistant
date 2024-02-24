@@ -25,6 +25,7 @@ def create_category(request):
             return redirect('filemanager:add_file')
     else:
         form = CategoryForm()
+    uncategorized, created = Category.objects.get_or_create(name='Без категорії', defaults={'name': 'Без категорії'})
     return render(request, 'filemanager/create_category.html', {'form': form})
 
 @login_required(login_url='/signin/')
@@ -52,7 +53,7 @@ def upload_file(request):
 
 def uploaded_files(request):
     files = File.objects.filter(user=request.user)
-    return render(request, 'filemanager/uploaded_files.html', {'files': files})
+    return render(request, 'filemanager/uploaded_files.html', {'page_title':'Your uploaded files','files': files})
 
 
 def download_file(request, file_id):
@@ -92,11 +93,38 @@ def manage_categories(request):
 
 def edit_category(request, category_id):
     category = Category.objects.get(pk=category_id)
-    # Логіка для редагування категорії
-    return redirect('filemanager:manage_categories')
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('filemanager:manage_categories')
+    else:
+        form = CategoryForm(instance=category)
+
+    return render(request, 'filemanager/edit_category.html', {'form': form})
 
 def delete_category(request, category_id):
-    category = Category.objects.get(pk=category_id)
+    category = get_object_or_404(Category, pk=category_id)
+
+    # Отримати категорію "Без категорії"
+    uncategorized = Category.objects.get(name='Без категорії')
+
+    # Оновити файли
+    File.objects.filter(category=category).update(category=uncategorized)
+
+    # Видалити категорію
     category.delete()
     return redirect('filemanager:manage_categories')
+
+
+def edit_file(request, file_id):
+    file_instance = get_object_or_404(File, pk=file_id)
+    if request.method == 'POST':
+        form = FileUploadForm(request.POST, request.FILES, instance=file_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('filemanager:uploaded_files')
+    else:
+        form = FileUploadForm(instance=file_instance)
+    return render(request, 'filemanager/edit_file.html', {'form': form})
 
