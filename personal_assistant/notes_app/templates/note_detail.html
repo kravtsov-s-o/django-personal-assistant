@@ -1,0 +1,18 @@
+<!-- notes_app/templates/note_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ note.title }}</h2>
+  <p>{{ note.content|linebreaksbr }}</p>
+  
+  <p><strong>Tags:</strong>
+    {% for tag in note.tags.all %}
+      {{ tag.name }}
+      {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+  
+  <p>Created at: {{ note.created_at }}</p>
+  
+  <a href="{% url 'note-list' %}">Back to notes list</a>
+{% endblock %}

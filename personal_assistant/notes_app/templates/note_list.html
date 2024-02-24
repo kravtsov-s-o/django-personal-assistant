@@ -1,0 +1,86 @@
+<!-- notes_app/templates/note_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Note List</h2>
+
+  <style>
+    .note-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .note-table th, .note-table td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px; /* Відступ від тексту до границь клітинки */
+    }
+
+    .note-table th {
+        background-color: #f2f2f2;
+    }
+
+    .tags a {
+        margin-right: 5px;
+    }
+
+    /* Додайте стиль для зроблення заголовка Title клікабельним */
+    .note-title {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+    }
+
+    /* Стиль для кнопки додавання нової нотатки */
+    .add-note-button {
+        margin-top: 10px;
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+  </style>
+
+  <!-- Додайте цей блок для відображення посилань на теги -->
+  <div class="tags">
+    Tags:
+    <a href="{% url 'note-list' %}">All</a> <!-- Посилання на всі нотатки -->
+    {% for tag in all_tags %}
+      <a href="{% url 'notes-by-tag' tag_name=tag.name %}">{{ tag.name }}</a>
+    {% endfor %}
+  </div>
+
+  <!-- Додайте кнопку для додавання нової нотатки -->
+  <a href="{% url 'add-note' %}" class="add-note-button">Add New Note</a>
+
+  <table class="note-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Content</th>
+        <th>Tags</th>
+        <th>Action 1</th>
+        <th>Action 2</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for note in notes %}
+        <tr>
+          <!-- Зробіть заголовок Title клікабельним і відкрийте детальну сторінку нотатки -->
+          <td><a href="{% url 'note-detail' pk=note.pk %}" class="note-title">{{ note.title }}</a></td>
+          <td>{{ note.content|linebreaks }}</td>
+          <td>
+            {% for tag in note.tags.all %}
+              <a href="{% url 'notes-by-tag' tag_name=tag.name %}">{{ tag.name }}</a>
+              {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </td>
+          <td><a href="{% url 'edit-note' pk=note.pk %}">Edit</a></td>
+          <td><a href="{% url 'delete-note' pk=note.pk %}">Delete</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
