@@ -7,11 +7,13 @@
 <body>
     <h1>Uploaded Files</h1>
     <ul>
-    {% for file_name in file_names %}
+    {% for file in files %}
         <li>
-            {{ file_name }}
-            
-            <a href="{% url 'filemanager:download_file' file_name %}">{{file_name}}</a>
+            {{ file.file.name }}
+            <a href="{% url 'filemanager:download_file' file.id %}">Download</a>
+            <form action="{% url 'filemanager:delete_file' file.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
             </form>
         </li>
     {% endfor %}
