@@ -4,8 +4,7 @@ import asyncio
 from datetime import datetime, timedelta
 import environ
 from pathlib import Path
-import httpx
-from django.http import JsonResponse
+import requests
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -28,22 +27,20 @@ NEWSAPI_URL = (f"https://newsapi.org/v2/everything?q=Apple&from={NEWS_DATE}&"
                f"sortBy=popularity&apiKey={env('NEWSAPI_API_KEY')}")
 
 
-async def fetch_data(url):
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        return response.json()
+def fetch_data(url):
+    response = requests.get(url)
+    return response.json()
 
 
-async def get_data_from_apis(urls):
-    tasks = [fetch_data(url) for url in urls]
-    results = await asyncio.gather(*tasks)
+def get_data_from_apis(urls):
+    results = [fetch_data(url) for url in urls]
     return results
 
 
 @login_required(login_url='/signin/')
-async def news_view(request):
+def news_view(request):
     urls = [PRIVAT_URL, WAR_STATISTICS_URL, NEWSAPI_URL]
-    raw_data = await get_data_from_apis(urls)
+    raw_data = get_data_from_apis(urls)
     war_stats = raw_data[1]["data"]["stats"]
     war_stats_increase = raw_data[1]["data"]["increase"]
     news_articles = raw_data[2]["articles"][::-1]
@@ -104,4 +101,3 @@ async def news_view(request):
 
     return render(request, 'news/index.html',
                   context={'page_title': 'News and Statistics', 'data': view_data})
-    # return JsonResponse(view_data, safe=False)
