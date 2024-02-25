@@ -21,24 +21,3 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
-
-class NoteViewMixin(View):
-    template_name = 'note_list.html'
-
-    @staticmethod
-    def search(query):
-        return Note.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
-
-    def edit(self, title, content, tags):
-        self.title = title
-        self.content = content
-        self.tags.set(tags)
-        self.save()
-
-    @staticmethod
-    def filter_by_tag(tag_name):
-        return Note.objects.filter(tags__name=tag_name)
-
-    @staticmethod
-    def sort_by_created_date():
-        return Note.objects.order_by('-created_at')
