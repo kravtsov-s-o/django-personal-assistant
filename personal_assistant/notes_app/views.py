@@ -7,21 +7,28 @@ from .forms import NoteForm
 import re
 
 class NoteListView(View):
-    template_name = 'note_list.html'
+    template_name = 'notes_app/note_list.html'
 
     def get(self, request, *args, **kwargs):
         notes = Note.objects.filter(user=request.user).order_by('-created_at')
-        return render(request, self.template_name, {'notes': notes})
+        #tags = Tag.objects.filter(user=request.user)  # Отримати всі теги користувача
+
+        # Виведення тегів у консоль для перевірки
+        #print("Tags:", tags)
+
+        all_tags = Tag.objects.filter(user=request.user)
+        return render(request, self.template_name, {'notes': notes, 'all_tags': all_tags})
+
 
 class NoteDetailView(View):
-    template_name = 'note_detail.html'
+    template_name = 'notes_app/note_detail.html'
 
     def get(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk, user=request.user)
         return render(request, self.template_name, {'note': note})
     
 class AddNoteView(View):
-    template_name = 'add_note.html'
+    template_name = 'notes_app/add_note.html'
 
     def get(self, request, *args, **kwargs):
         form = NoteForm(user=request.user)
@@ -49,7 +56,7 @@ class AddNoteView(View):
         return render(request, self.template_name, {'form': form})
     
 class SearchByTagView(View):
-    template_name = 'search_by_tag.html'
+    template_name = 'notes_app/search_by_tag.html'
 
     def get(self, request, *args, **kwargs):
         tag_name = request.GET.get('tag', '')
@@ -57,7 +64,7 @@ class SearchByTagView(View):
         return render(request, self.template_name, {'notes': notes, 'tag_name': tag_name})
     
 class EditNoteView(LoginRequiredMixin, View):
-    template_name = 'edit_note.html'
+    template_name = 'notes_app/edit_note.html'
 
     def get(self, request, pk):
         note = get_object_or_404(Note, pk=pk, user=request.user)
@@ -95,7 +102,7 @@ class EditNoteView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'form': form, 'note': note})
 
 class DeleteNoteView(View):
-    template_name = 'delete_note.html'
+    template_name = 'notes_app/delete_note.html'
 
     def get(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk, user=request.user)
@@ -107,9 +114,13 @@ class DeleteNoteView(View):
         return redirect('note-list')
 
 class NotesByTagView(View):
-    template_name = 'note_list.html'
+    template_name = 'notes_app/note_list.html'
 
     def get(self, request, tag_name, *args, **kwargs):
         notes = Note.objects.filter(tags__name=tag_name)
         all_tags = Tag.objects.all()
+
+        # Виведення тегів у консоль для перевірки
+        print("Notes filtered by tag:", notes)
+
         return render(request, self.template_name, {'notes': notes, 'all_tags': all_tags})

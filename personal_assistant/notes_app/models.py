@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.views import View
 from django.db.models import Q
-from taggit.managers import TaggableManager
 from django.utils import timezone
 
 class Tag(models.Model):
