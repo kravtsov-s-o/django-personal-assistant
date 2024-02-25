@@ -22,7 +22,7 @@ NEWS_DAYS = 2  # Кількість днів за які беремо новин
 """
 NEWS_DATE = CURRENT_DATE - timedelta(days=NEWS_DAYS)
 CURRENT_DATE_STR_NEWS = NEWS_DATE.strftime("%Y-%m-%d")  # Переводимо дату в стрінгу в форматі рррр-мм-дд
-NEWS_TO_SHOW = 5  # Кількість новин які показувати користувачу
+NEWS_TO_SHOW = 7  # Кількість новин які показувати користувачу
 NEWSAPI_URL = (f"https://newsapi.org/v2/everything?q=Apple&from={NEWS_DATE}&"
                f"sortBy=popularity&apiKey={env('NEWSAPI_API_KEY')}")
 
@@ -95,7 +95,7 @@ def news_view(request):
                            "author": news_articles[i]["author"],
                            "title": news_articles[i]["title"],
                            "description": news_articles[i]["description"],
-                           "link to source": news_articles[i]["url"],
+                           "link_to_source": news_articles[i]["url"],
                            "publishedAt": news_articles[i]["publishedAt"]} for i in range(NEWS_TO_SHOW)]
                  }
 
