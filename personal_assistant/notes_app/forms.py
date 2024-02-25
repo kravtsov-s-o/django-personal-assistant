@@ -9,7 +9,7 @@ class NoteForm(forms.ModelForm):
             'tags': forms.TextInput(),
         }
 
-    # Введіть теги, розділені комою (наприклад, тег1, тег2, тег3):
+    # Enter comma-separated tags (eg tag1, tag2, tag3):
     tags = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):

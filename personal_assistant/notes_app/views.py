@@ -30,30 +30,20 @@ class AddNoteView(View):
         form = NoteForm(user=request.user)
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, pk):
-        note = get_object_or_404(Note, pk=pk, user=request.user)
-        form = NoteForm(request.POST, instance=note)
-
+    def post(self, request, *args, **kwargs):
+        form = NoteForm(request.POST, user=request.user)
         if form.is_valid():
-            # Збережіть нотатку
-            form.save()
-
-            # Отримайте теги з форми
+            note = form.save(commit=False)
+            note.user = request.user
+            note.save()
             tags_input = form.cleaned_data['tags']
-            tags_list = [tag.strip() for tag in tags_input.split(',')]
-
-            # Очистіть існуючі теги нотатки та додайте нові теги
-            note.tags.clear()
-
-            # Цикл по всіх тегах
+            tags_list = [tag.strip() for tag in tags_input]
             for tag_name in tags_list:
-                # Отримайте або створіть тег для кожного і додайте його до нотатки
                 tag, created = Tag.objects.get_or_create(name=tag_name, user=request.user)
                 note.tags.add(tag)
-
-            return redirect('note_detail', pk=note.pk)
-
-        return render(request, self.template_name, {'form': form, 'note': note})
+            note.save()
+            return redirect('note-list')
+        return render(request, self.template_name, {'form': form})
 
 @method_decorator(login_required(login_url='/signin/'), name='dispatch')     
 class EditNoteView(View):
