@@ -1,3 +1,6 @@
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.utils.decorators import method_decorator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,6 +9,7 @@ from .models import Note, Tag
 from .forms import NoteForm
 import re
 
+@method_decorator(login_required(login_url='/signin/'), name='dispatch')
 class NoteListView(View):
     template_name = 'notes_app/note_list.html'
 
@@ -19,14 +23,15 @@ class NoteListView(View):
         all_tags = Tag.objects.filter(user=request.user)
         return render(request, self.template_name, {'notes': notes, 'all_tags': all_tags})
 
-
+@method_decorator(login_required(login_url='/signin/'), name='dispatch')
 class NoteDetailView(View):
     template_name = 'notes_app/note_detail.html'
 
     def get(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk, user=request.user)
         return render(request, self.template_name, {'note': note})
-    
+
+@method_decorator(login_required(login_url='/signin/'), name='dispatch')   
 class AddNoteView(View):
     template_name = 'notes_app/add_note.html'
 
@@ -54,7 +59,8 @@ class AddNoteView(View):
             return redirect('note-list')
 
         return render(request, self.template_name, {'form': form})
-    
+
+@method_decorator(login_required(login_url='/signin/'), name='dispatch')      
 class SearchByTagView(View):
     template_name = 'notes_app/search_by_tag.html'
 
@@ -62,8 +68,9 @@ class SearchByTagView(View):
         tag_name = request.GET.get('tag', '')
         notes = Note.search_by_tag(tag_name)
         return render(request, self.template_name, {'notes': notes, 'tag_name': tag_name})
-    
-class EditNoteView(LoginRequiredMixin, View):
+
+@method_decorator(login_required(login_url='/signin/'), name='dispatch')     
+class EditNoteView(View):
     template_name = 'notes_app/edit_note.html'
 
     def get(self, request, pk):
@@ -101,6 +108,7 @@ class EditNoteView(LoginRequiredMixin, View):
         
         return render(request, self.template_name, {'form': form, 'note': note})
 
+@method_decorator(login_required(login_url='/signin/'), name='dispatch') 
 class DeleteNoteView(View):
     template_name = 'notes_app/delete_note.html'
 
@@ -113,6 +121,7 @@ class DeleteNoteView(View):
         note.delete()
         return redirect('note-list')
 
+@method_decorator(login_required(login_url='/signin/'), name='dispatch') 
 class NotesByTagView(View):
     template_name = 'notes_app/note_list.html'
 
