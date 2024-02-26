@@ -107,20 +107,33 @@ class AddNoteView(View):
 class EditNoteView(View):
     template_name = 'notes_app/add_note.html'
 
-    def get(self, request, pk):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
         note = get_object_or_404(Note, pk=pk, user=request.user)
         form = NoteForm(instance=note, user=request.user)
         return render(request, self.template_name, {'page_title': f'Edit: {note.title}', 'form': form, 'note': note})
 
-    def post(self, request, pk):
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
         note = get_object_or_404(Note, pk=pk, user=request.user)
         form = NoteForm(request.POST, instance=note, user=request.user)
 
         if form.is_valid():
-            note.title = form.cleaned_data['title']
-            note.content = form.cleaned_data['content']
+            note = form.save(commit=False)
+            note.user = request.user
             note.save()
-            return redirect('note-detail', pk=note.pk)
+
+            # Очищаємо і додаємо теги
+            note.tags.clear()
+            tags_input = form.cleaned_data['tags']
+            tags_list = [tag.strip() for tag in tags_input]
+            for tag_name in tags_list:
+                tag, created = Tag.objects.get_or_create(name=tag_name, user=request.user)
+                note.tags.add(tag)
+
+            note.save()
+
+            return redirect('note-list')
 
         return render(request, self.template_name, {'page_title': f'Edit: {note.title}', 'form': form, 'note': note})
 
