@@ -1,11 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Contact
 from django.contrib.auth.models import User
+from .models import Contact
+from .forms import AddContact
 
 
 # Create your views here.
+@login_required(login_url='/signin/')
 def main(request):
     contacts = Contact.objects.filter(user=request.user).order_by("name")
 
@@ -24,3 +26,27 @@ def main(request):
     page_range = range(1, contacts_page.paginator.num_pages + 1)
 
     return render(request, "contacts/index.html", context={"page_title": "contacts list", "contacts": contacts_page, "page_range": page_range})
+
+
+
+
+@login_required(login_url='/signin/')
+def add_contact(request):
+
+    if request.method == 'POST':
+        form = AddContact(request.POST)
+
+        if form.is_valid():
+            new_contact = form.save(commit=False)
+            new_contact.user = request.user
+            new_contact.save()
+
+            return redirect(to="contacts:main")
+        else:
+            return render(request, "contacts/add-contact.html", {"form": form})
+
+    return render(
+        request,
+        "contacts/add-contact.html",
+        context={"form": AddContact},
+    )

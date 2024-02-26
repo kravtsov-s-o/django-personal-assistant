@@ -9,7 +9,7 @@
         <h1 class="card-title h3">{{ page_title }}</h1>
     </div>
     <div class="col text-end">
-        <a href="add-contact.html" class="btn btn-primary">Add contact</a>
+        <a href="{% url 'contacts:add_contact'%}" class="btn btn-primary">Add contact</a>
     </div>
 </div>
 <div class="row">
@@ -78,7 +78,7 @@
             {% endif %}
             {% else %}
             <div class="card-body"> List is empty. </div>
-        {% andif %}
+        {% endif %}
         </div>
     </div>
 </div>

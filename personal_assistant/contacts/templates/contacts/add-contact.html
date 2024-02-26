@@ -1,0 +1,31 @@
+{% extends 'users/base-template.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="card-title h3">{{ page_title }}</h1>
+    </div>
+    <div class="col text-end">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'contacts:add_contact'%}" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Save contact</button>
+                        <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
