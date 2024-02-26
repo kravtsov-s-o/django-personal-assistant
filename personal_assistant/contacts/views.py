@@ -51,32 +51,30 @@ def add_contact(request):
 
 
 @login_required(login_url='/signin/')
-def delete_contact(request,pk=pk):
+def delete_contact(request, pk):
     contact = get_object_or_404(Contact, pk=pk, user=request.user)
     contact.delete()
     return redirect("contacts:main")
 
 
 @login_required(login_url='/signin/')
-def edit_contact(request,pk=pk):
+def edit_contact(request, pk):
+    contact = get_object_or_404(Contact, pk=pk, user=request.user)
     if request.method == "POST":
-        form = AddContact(request.POST)
+        form = AddContact(request.POST, instance=contact)
 
         if form.is_valid():
-            new_contact = form.save(commit=False)
-            new_contact.user = request.user
-            new_contact.save()
+            form.save()
 
             return redirect(to="contacts:main")
         else:
             return render(
                 request,
                 "contacts/add-contact.html",
-                {"page_title": "Edit contact", "form": form},
+                {"page_title": "Edit contact", "contact": contact, "form": form},
             )
-        
-    contact = get_object_or_404(Contact, pk=pk, user=request.user)
+
     form = AddContact(instance=contact)
     return render(
-        request, "contacts/add-contact.html", {"page_title": "Edit contact", "form": form}
+        request, "contacts/add-contact.html", {"page_title": "Edit contact", "contact": contact, "form": form}
     )
