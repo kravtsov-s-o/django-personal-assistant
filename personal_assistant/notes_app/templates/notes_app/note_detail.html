@@ -1,18 +1,48 @@
-<!-- notes_app/templates/note_detail.html -->
 {% extends 'users/base-template.html' %}
 
+{% block title %}{{ note.title }}{% endblock %}
+
 {% block content %}
-  <h2>{{ note.title }}</h2>
-  <p>{{ note.content|linebreaksbr }}</p>
-  
-  <p><strong>Tags:</strong>
-    {% for tag in note.tags.all %}
-      {{ tag.name }}
-      {% if not forloop.last %}, {% endif %}
-    {% endfor %}
-  </p>
-  
-  <p>Created at: {{ note.created_at }}</p>
-  
-  <a href="{% url 'note-list' %}">Back to notes list</a>
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="card-title h3">{{ note.title }}</h1>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'edit-note' pk=note.pk %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'delete-note' pk=note.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <p class="m-0">Created: {{ note.created_at|date:"H:i - d.m.Y" }}</p>
+            </div>
+            <div class="card-body">
+                {{ note.content|linebreaksbr }}
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-link" href="{% url 'note-list' %}">Back to notes list</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="h4 m-0">Note Tags</h2>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled m-0">
+                    <li><a href="{% url 'note-list' %}" class="badge btn btn-primary">All</a></li>
+                    {% for tag in note.tags.all %}
+                    <li>
+                        <a href="{% url 'notes-by-tag' tag_name=tag.name %}"
+                           class="badge btn btn-primary">{{ tag.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

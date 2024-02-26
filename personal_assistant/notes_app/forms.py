@@ -1,24 +1,24 @@
 from django import forms
 from .models import Note, Tag
 
+
 class NoteForm(forms.ModelForm):
+    tags = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': "form-control mt-1", 'placeholder': "Enter comma-separated tags (e.g., tag1, tag2, tag3)"}))
+
     class Meta:
         model = Note
         fields = ['title', 'content', 'tags']
         widgets = {
-            'tags': forms.TextInput(),
+            'title': forms.TextInput(attrs={'class': "form-control mt-1", 'placeholder': "Title"}),
+            'content': forms.Textarea(attrs={'class': "form-control mt-1", 'rows': "3", 'placeholder': "Enter note"}),
+            'tags': forms.TextInput(attrs={'class': "form-control mt-1", 'placeholder': "Enter comma-separated tags (e.g., tag1, tag2, tag3)"}),
         }
-
-    # Enter comma-separated tags (eg tag1, tag2, tag3):
-    tags = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(NoteForm, self).__init__(*args, **kwargs)
         self.fields['tags'].required = False
         self.user = user
-
-        self.fields['tags'].widget = forms.TextInput()
 
     def clean_tags(self):
         tags_input = self.cleaned_data['tags']
