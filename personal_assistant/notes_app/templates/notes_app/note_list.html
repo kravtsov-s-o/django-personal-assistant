@@ -17,15 +17,22 @@
         <div class="card mb-4">
             <div class="card-body">
                 <h2 class="h4">
-                    <a class="text-decoration-none text-dark" href="{% url 'note-detail' pk=note.pk %}">{{ note.title }}</a></h2>
+                    <a class="text-decoration-none text-dark" href="{% url 'note-detail' pk=note.pk %}">{{ note.title }}</a>
+                </h2>
                 <p>{{ note.content|truncatechars:50 }}</p>
-                <p class="mb-0 mt-3">
-                    <a href="{% url 'note-detail' pk=note.pk %}" class="btn btn-sm btn-outline-primary">Read more</a></p>
             </div>
-            <div class="card-footer">
-                {% for tag in note.tags.all %}
-                <a href="{% url 'notes-by-tag' tag_name=tag.name %}" class="badge btn btn-sm btn-primary">{{ tag.name }}</a>
-                {% endfor %}
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <div>
+                    Tags:
+                    {% for tag in note.tags.all %}
+                        <a href="{% url 'notes-by-tag' tag_name=tag.name %}" class="badge btn btn-sm btn-primary">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'note-detail' pk=note.pk %}" class="btn btn-sm btn-outline-primary">Read more</a>
+                    <a href="{% url 'edit-note' pk=note.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'delete-note' pk=note.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -73,8 +80,7 @@
                     <li><a href="{% url 'note-list' %}" class="badge btn btn-primary">All</a></li>
                     {% for tag in all_tags %}
                     <li>
-                        <a href="{% url 'notes-by-tag' tag_name=tag.name %}"
-                           class="badge btn btn-primary">{{ tag.name }}</a>
+                        <a href="{% url 'notes-by-tag' tag_name=tag.name %}" class="badge btn btn-primary">{{ tag.name }}</a>
                     </li>
                     {% endfor %}
                 </ul>
