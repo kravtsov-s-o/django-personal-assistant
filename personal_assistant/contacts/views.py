@@ -25,9 +25,7 @@ def main(request):
 
     page_range = range(1, contacts_page.paginator.num_pages + 1)
 
-    return render(request, "contacts/index.html", context={"page_title": "contacts list", "contacts": contacts_page, "page_range": page_range})
-
-
+    return render(request, "contacts/index.html", context={"page_title": "Contacts List", "contacts": contacts_page, "page_range": page_range})
 
 
 @login_required(login_url='/signin/')
@@ -43,10 +41,42 @@ def add_contact(request):
 
             return redirect(to="contacts:main")
         else:
-            return render(request, "contacts/add-contact.html", {"form": form})
+            return render(request, "contacts/add-contact.html", {"page_title": "New contact", "form": form})
 
     return render(
         request,
         "contacts/add-contact.html",
-        context={"form": AddContact},
+        context={"page_title": "New contact", "form": AddContact},
+    )
+
+
+@login_required(login_url='/signin/')
+def delete_contact(request,pk=pk):
+    contact = get_object_or_404(Contact, pk=pk, user=request.user)
+    contact.delete()
+    return redirect("contacts:main")
+
+
+@login_required(login_url='/signin/')
+def edit_contact(request,pk=pk):
+    if request.method == "POST":
+        form = AddContact(request.POST)
+
+        if form.is_valid():
+            new_contact = form.save(commit=False)
+            new_contact.user = request.user
+            new_contact.save()
+
+            return redirect(to="contacts:main")
+        else:
+            return render(
+                request,
+                "contacts/add-contact.html",
+                {"page_title": "Edit contact", "form": form},
+            )
+        
+    contact = get_object_or_404(Contact, pk=pk, user=request.user)
+    form = AddContact(instance=contact)
+    return render(
+        request, "contacts/add-contact.html", {"page_title": "Edit contact", "form": form}
     )

@@ -46,8 +46,11 @@
                             <td>{{ contact.birthday|date:"d.m.Y" }}</td>
                             <td class="text-center">
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-outline-primary">Edit</button>
+                                    <button type="button" class="btn btn-outline-primary">Edit</button>                                    
+                                    <form action="{% url 'contacts:delete_contact'%}" method="post">  
+                                    {% csrf_token %}
                                     <button type="button" class="btn btn-outline-danger">Delete</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr> 
