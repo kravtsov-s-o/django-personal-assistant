@@ -1,0 +1,40 @@
+{% extends 'users/base-template.html' %}
+
+{% block content %}
+  <div class="row mb-3">
+    <div class="col">
+        <h1 class="card-title h3">{{ page_title }}</h1>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'note-list' %}" class="btn btn-outline-primary">Note List</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <form method="post" action="{% if note %}{% url 'edit-note' pk=note.pk %}{% else %}{% url 'add-note' %}{% endif %}">
+                <div class="card-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.title.id_for_label }}">Title:</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.content.id_for_label }}">Content:</label>
+                        {{ form.content }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.tags.id_for_label }}">Tags:</label>
+                        <input type="text" name="tags" value="{% if note %}{{ note.tags.all|join:', ' }}{% endif %}" placeholder="Enter tags" class="form-control mt-1" />
+                        <div id="tagsHelp" class="form-text">Comma-separated tags (e.g., tag1, tag2, tag3)</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" type="submit">Save Note</button>
+                    <button class="btn btn-outline-secondary" type="reset">Clear form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+{% endblock %}
