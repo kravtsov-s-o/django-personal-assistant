@@ -13,6 +13,7 @@
 </div>
 <div class="row">
     <div class="col-md-9">
+        {% if notes %}
         {% for note in notes %}
         <div class="card mb-4">
             <div class="card-body">
@@ -36,6 +37,9 @@
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        <p>You don't have any note. <a href="{% url 'add-note' %}">Add one...</a></p>
+        {% endif %}
         {% if notes.paginator.num_pages > 1 %}
         <nav aria-label="Page navigation example">
             <ul class="pagination m-0">

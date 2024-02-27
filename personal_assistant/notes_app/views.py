@@ -153,9 +153,24 @@ class DeleteNoteView(View):
 @method_decorator(login_required(login_url='/signin/'), name='dispatch')
 class NotesByTagView(View):
     template_name = 'notes_app/note_list.html'
+    items_per_page = 10
 
     def get(self, request, tag_name, *args, **kwargs):
         notes = Note.objects.filter(tags__name=tag_name)
-        all_tags = Tag.objects.all()
+        all_tags = Tag.objects.filter(user=request.user)
 
-        return render(request, self.template_name, {'page_title': f'Notes by: {tag_name}', 'notes': notes, 'all_tags': all_tags})
+        # Пагінація
+        paginator = Paginator(notes, self.items_per_page)
+        page = request.GET.get('page')
+
+        try:
+            notes_page = paginator.page(page)
+        except PageNotAnInteger:
+            notes_page = paginator.page(1)
+        except EmptyPage:
+            notes_page = paginator.page(paginator.num_pages)
+
+        page_range = range(1, notes_page.paginator.num_pages + 1)
+
+        return render(request, self.template_name,
+                      {'page_title': f'Notes by: {tag_name}', 'notes': notes_page, 'all_tags': all_tags, 'page_range': page_range})
