@@ -13,24 +13,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-10">
         <div class="card">
-            <div class="card-header">
-                <form action="{% url 'contacts:main' %}" method="get">
-                    <div class="d-flex gap-2">
-                        <input type="search" class="form-control" id="search" name="search" value="{{ request.GET.search }}"
-                            placeholder="Find contact">
-                        <button class="btn btn-sm btn-primary" type="submit">Search</button>
-                    </div>
-                </form>
-                <form action="{% url 'contacts:main' %}" method="get">
-                    <div class="d-flex gap-2">
-                        <input type="number" class="form-control" id="days" name="days" value="{{ request.GET.days }}"
-                            placeholder="enter days number">
-                        <button class="btn btn-sm btn-primary" type="submit">Search</button>
-                    </div>
-                </form>
-            </div>
             {% if contacts %}
             <div class="card-body">
                 <table class="table align-middle">
@@ -54,15 +38,16 @@
                             <td>{{ contact.birthday|date:"d.m.Y" }}</td>
                             <td class="text-center">
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a href="{% url 'contacts:edit_contact' pk=contact.pk %}" class="btn btn-outline-primary">Edit</a>                                    
-                                    <form action="{% url 'contacts:delete_contact' pk=contact.pk %}" method="post">  
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                    <a href="{% url 'contacts:edit_contact' pk=contact.pk %}"
+                                        class="btn btn-outline-primary">Edit</a>
+                                    <form action="{% url 'contacts:delete_contact' pk=contact.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
                                     </form>
                                 </div>
                             </td>
-                        </tr> 
-                        {% endfor %}                        
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -71,7 +56,9 @@
                 <nav aria-label="Page navigation example">
                     <ul class="pagination m-0">
                         {% if contacts.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page={{ contacts.previous_page_number }}">Previous</a></li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ contacts.previous_page_number }}">Previous</a>
+                        </li>
                         {% endif %}
                         {% for number in page_range %}
                         {% if number != contacts.number %}
@@ -81,15 +68,46 @@
                         {% endif %}
                         {% endfor %}
                         {% if contacts.has_next %}
-                        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
+                        </li>
                         {% endif %}
                     </ul>
                 </nav>
             </div>
             {% endif %}
             {% else %}
-            <div class="card-body"> List is empty. </div>
-        {% endif %}
+            <div class="card-body"> List is empty.</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="h5 m-0">Search</h3>
+            </div>
+            <form action="{% url 'contacts:main' %}" method="get">
+                <div class="card-body">
+                    <input type="search" class="form-control" id="search" name="search" value="{{ request.GET.search }}"
+                        placeholder="Find contact">
+                </div>
+                <div class="card-footer d-grid">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="h5 m-0">Search by Birthday</h3>
+            </div>
+            <form action="{% url 'contacts:main' %}" method="get">
+                <div class="card-body">
+                    <input type="number" class="form-control" id="days" name="days" value="{{ request.GET.days }}"
+                        placeholder="Days to birthday">
+                </div>
+                <div class="card-footer d-grid">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
