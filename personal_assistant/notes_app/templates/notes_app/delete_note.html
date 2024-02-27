@@ -1,14 +1,11 @@
 {% extends 'users/base-template.html' %}
 
-{% block title %}{{ page_title }}{% endblock %}
+{% block title %}Delete Note{% endblock %}
 
 {% block content %}
 <div class="row mb-3">
     <div class="col">
-        <h1 class="card-title h3">{{ page_title }}</h1>
-    </div>
-    <div class="col text-end">
-        <a href="{% url 'note-list' %}" class="btn btn-outline-primary">Note List</a>
+        <h1 class="card-title h3">Delete Note</h1>
     </div>
 </div>
 <div class="row">
@@ -22,11 +19,9 @@
                     {% csrf_token %}
                     <button class="btn btn-danger" type="submit">Delete</button>
                 </form>
+                <a href="{% url 'note-detail' pk=note.pk %}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </div>
     </div>
 </div>
-
-
-
 {% endblock %}

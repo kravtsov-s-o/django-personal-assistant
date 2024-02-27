@@ -15,10 +15,19 @@
             <form method="post" action="{% if note %}{% url 'edit-note' pk=note.pk %}{% else %}{% url 'add-note' %}{% endif %}">
                 <div class="card-body">
                     {% csrf_token %}
-                    {{ form.title }}
-                    {{ form.content }}
-                    <label for="{{ form.tags.id_for_label }}">Tags:</label>
-                    <input type="text" name="tags" value="{% if note %}{{ note.tags.all|join:', ' }}{% endif %}" placeholder="Enter comma-separated tags (e.g., tag1, tag2, tag3)" class="form-control mt-1" />
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.title.id_for_label }}">Title:</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.content.id_for_label }}">Content:</label>
+                        {{ form.content }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.tags.id_for_label }}">Tags:</label>
+                        <input type="text" name="tags" value="{% if note %}{{ note.tags.all|join:', ' }}{% endif %}" placeholder="Enter tags" class="form-control mt-1" />
+                        <div id="tagsHelp" class="form-text">Comma-separated tags (e.g., tag1, tag2, tag3)</div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <button class="btn btn-primary" type="submit">Save Note</button>

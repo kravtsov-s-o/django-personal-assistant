@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.views import View
 from .models import Note, Tag
 from .forms import NoteForm
@@ -16,8 +16,8 @@ class NoteListView(View):
         # Отримати значення з параметра пошуку у GET-запиті
         search_query = request.GET.get('search', None)
 
-        # Отримати всі теги
-        all_tags = Tag.objects.filter(user=request.user)
+        # Отримати всі теги, відсортовані за кількістю нотаток, і обмежити топ-10
+        all_tags = Tag.objects.filter(user=request.user).annotate(num_notes=Count('notes')).order_by('-num_notes')[:10]
 
         # Отримати всі нотатки
         notes = Note.objects.filter(user=request.user).order_by('-created_at')
