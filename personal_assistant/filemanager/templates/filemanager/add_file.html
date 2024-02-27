@@ -19,6 +19,7 @@
                     {{ form.as_p }}
                     <div class="mb-3">
                         <button class="btn btn-primary" type="submit">Upload</button>
+                        <a href="{% url 'filemanager:create_category' %}" class="btn btn-secondary">Create Category</a>
                         <button class="btn btn-secondary" type="reset">Reset</button>
                     </div>
                 </form>
