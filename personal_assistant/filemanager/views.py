@@ -38,6 +38,10 @@ def uploaded_files(request):
     files = File.objects.filter(user=request.user)
     return render(request, 'filemanager/uploaded_files.html', {'page_title':'Your uploaded files','files': files})
 
+def files_by_catogories(request, category_id):
+    files = File.objects.filter(category_id=category_id)
+    return render(request, 'filemanager/uploaded_files.html', {'page_title': 'Your uploaded files by categories', 'files': files})
+
 
 def download_file(request, file_id):
     file_instance = get_object_or_404(File, pk=file_id)
@@ -110,3 +114,6 @@ def delete_category(request, category_id):
     category.delete()
     return redirect('filemanager:manage_categories')
 
+def choose_category(request):
+    categories = Category.objects.filter(user=request.user)
+    return render(request, 'filemanager/choose_category.html', {'categories': categories})
