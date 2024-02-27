@@ -24,4 +24,4 @@ urlpatterns = [
     path('', include('users.urls')),
     path('notes/', include('notes_app.urls')),
     path('', include('news.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
