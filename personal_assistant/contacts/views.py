@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
+from django.db.models import Q
+from django.urls import reverse
+from datetime import date, datetime, timedelta
 from .models import Contact
 from .forms import AddContact
 
@@ -10,6 +13,26 @@ from .forms import AddContact
 @login_required(login_url='/signin/')
 def main(request):
     contacts = Contact.objects.filter(user=request.user).order_by("name")
+
+    if request.GET.get('search'):
+        query = request.GET.get('search')        
+
+        contacts = contacts.filter(
+            Q(name__icontains=query) |
+            Q(address__icontains=query) |
+            Q(phone__icontains=query) |
+            Q(email__icontains=query)
+        )
+
+    if request.GET.get("days"):
+        query = request.GET.get("days")
+
+        current_day = date.today()
+        new_date = current_day + timedelta(days=int(query))
+
+        contacts = Contact.objects.filter(
+            birthday__month=new_date.month, birthday__day=new_date.day
+        )
 
     items_per_page = 20
     paginator = Paginator(contacts, items_per_page)
@@ -41,20 +64,9 @@ def add_contact(request):
 
             return redirect(to="contacts:main")
         else:
-            return render(request, "contacts/add-contact.html", {"page_title": "New contact", "form": form})
+            return render(request, "contacts/add-contact.html", {"page_title": "New contact", 'form_action': reverse('contacts:add_contact'), "form": form})
 
-    return render(
-        request,
-        "contacts/add-contact.html",
-        context={"page_title": "New contact", "form": AddContact},
-    )
-
-
-@login_required(login_url='/signin/')
-def delete_contact(request, pk):
-    contact = get_object_or_404(Contact, pk=pk, user=request.user)
-    contact.delete()
-    return redirect("contacts:main")
+    return render(request, "contacts/add-contact.html", {"page_title": "New contact", 'form_action': reverse('contacts:add_contact'), "form": AddContact})
 
 
 @login_required(login_url='/signin/')
@@ -71,10 +83,24 @@ def edit_contact(request, pk):
             return render(
                 request,
                 "contacts/add-contact.html",
-                {"page_title": "Edit contact", "contact": contact, "form": form},
+                {"page_title": "Edit contact", 'form_action': reverse('contacts:edit_contact', args=[contact.pk]), 'contact': contact, "form": form},
             )
 
     form = AddContact(instance=contact)
     return render(
-        request, "contacts/add-contact.html", {"page_title": "Edit contact", "contact": contact, "form": form}
+        request,
+        "contacts/add-contact.html",
+        {
+            "page_title": "Edit contact",
+            "form_action": reverse("contacts:edit_contact", args=[contact.pk]),
+            "contact": contact,
+            "form": form,
+        },
     )
+
+
+@login_required(login_url="/signin/")
+def delete_contact(request, pk):
+    contact = get_object_or_404(Contact, pk=pk, user=request.user)
+    contact.delete()
+    return redirect("contacts:main")

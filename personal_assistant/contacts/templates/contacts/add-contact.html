@@ -15,7 +15,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <form action="{% url 'contacts:add_contact'%}" method="post">
+                <form id="contactForm" action="{{ form_action }}" method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <div class="mb-3">
@@ -28,4 +28,16 @@
     </div>
 </div>
 
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/imask"></script>
+<script>
+    const phoneInput = document.getElementById('id_phone');
+    const phoneMask = {
+        mask: '+{38}0000000000'
+    };
+    const mask = IMask(phoneInput, phoneMask);
+</script>
 {% endblock %}
