@@ -43,7 +43,7 @@ def signinuser(request):
 
         if user is None:
             messages.error(request, 'Username or password didn\'t match')
-            return redirect(to='users/signin')
+            return redirect(to='users:signin')
 
         login(request, user)
         return redirect(to='users:dashboard')
