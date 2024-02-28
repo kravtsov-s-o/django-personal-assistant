@@ -74,10 +74,8 @@
                             <div class="d-inline-flex gap-2">
                                 <a href="{% url 'filemanager:edit_file' file.id %}"
                                    class="btn btn-sm btn-primary">Edit</a>
-                                <form action="{% url 'filemanager:delete_file' file.id %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                </form>
+                                <a href="{% url 'filemanager:delete_file' file.id %}"
+                                   class="btn btn-sm btn-danger">Delete</a>
                             </div>
                         </td>
                     </tr>

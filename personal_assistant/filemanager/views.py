@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -115,16 +116,25 @@ def edit_file(request, file_id):
 def delete_file(request, pk):
     file_instance = get_object_or_404(File, pk=pk)
     file_name = file_instance.file.name
-    file_instance.delete()
-    if file_name:
-        s3_client = boto3.client('s3')
-    try:
-        s3_client.delete_object(Bucket=bucket_name, Key=file_name)
-    except ClientError as e:
-        print(f'Failed to delete file from S3: {e}')
 
-    return redirect('filemanager:uploaded_files')
+    if request.method == 'POST':
+        file_instance.delete()
+        if file_name:
+            s3_client = boto3.client('s3')
+        try:
+            s3_client.delete_object(Bucket=bucket_name, Key=file_name)
+        except ClientError as e:
+            print(f'Failed to delete file from S3: {e}')
 
+        return redirect('filemanager:uploaded_files')
+
+    return render(request, 'filemanager/delete.html',
+                  context={'page_title': 'Delete File',
+                           "form_action": reverse("filemanager:delete_file", args=[file_instance.pk]),
+                           "back_list": reverse("filemanager:uploaded_files"),
+                           'type': 'file',
+                           'name': file_name
+                           })
 
 @login_required(login_url='/signin/')
 def create_category(request):
@@ -162,8 +172,18 @@ def edit_category(request, category_id):
 
 def delete_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    uncategorized = Category.objects.filter(name='Без категорії', user=request.user).first()
-    files = File.objects.filter(category=category)
-    files.update(category=uncategorized)
-    category.delete()
-    return redirect('filemanager:manage_categories')
+
+    if request.method == 'POST':
+        uncategorized = Category.objects.filter(name='Без категорії', user=request.user).first()
+        files = File.objects.filter(category=category)
+        files.update(category=uncategorized)
+        category.delete()
+        return redirect('filemanager:manage_categories')
+
+    return render(request, 'filemanager/delete.html',
+                  context={'page_title': 'Delete Category',
+                           "form_action": reverse("filemanager:delete_category", args=[category.pk]),
+                           "back_list": reverse("filemanager:manage_categories"),
+                           'type': 'category',
+                           'name': category.name
+                           })
