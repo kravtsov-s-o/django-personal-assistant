@@ -1,0 +1,115 @@
+{% extends 'users/base-template.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="card-title h3">{{ page_title }}</h1>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'contacts:add_contact'%}" class="btn btn-primary">Add contact</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-10">
+        <div class="card">
+            {% if contacts %}
+            <div class="card-body">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Birthday</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contact in contacts %}
+                        <tr class="text-center">
+                            <td class="text-start">{{contact.name}}</td>
+                            <td><a href="tel:{{contact.name}}">{{contact.phone}}</a></td>
+                            <td><a href="mailto:{{contact.email}}">{{contact.email}}</a></td>
+                            <td>{{contact.address}}</td>
+                            <td>{{ contact.birthday|date:"d.m.Y" }}</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{% url 'contacts:edit_contact' pk=contact.pk %}"
+                                        class="btn btn-outline-primary">Edit</a>
+                                    <form action="{% url 'contacts:delete_contact' pk=contact.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if contacts.paginator.num_pages > 1 %}
+            <div class="card-footer">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination m-0">
+                        {% if contacts.has_previous %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ contacts.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        {% for number in page_range %}
+                        {% if number != contacts.number %}
+                        <li class="page-item"><a class="page-link" href="?page={{ number }}">{{ number }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link">{{ number }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if contacts.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="card-body"> List is empty.</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="h5 m-0">Search</h3>
+            </div>
+            <form action="{% url 'contacts:main' %}" method="get">
+                <div class="card-body">
+                    <input type="search" class="form-control" id="search" name="search" value="{{ request.GET.search }}"
+                        placeholder="Find contact">
+                </div>
+                <div class="card-footer d-grid">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="h5 m-0">Search by Birthday</h3>
+            </div>
+            <form action="{% url 'contacts:main' %}" method="get">
+                <div class="card-body">
+                    <input type="number" class="form-control" id="days" name="days" value="{{ request.GET.days }}"
+                        placeholder="Days to birthday">
+                </div>
+                <div class="card-footer d-grid">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
