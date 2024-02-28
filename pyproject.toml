@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Personal Assistant - Jarlis_"
-version = "0.0.1"
+version = "0.1.0"
 description = "Command project"
 authors = ["group-3"]
 
@@ -10,6 +10,8 @@ Django = "^5.0.2"
 psycopg2-binary = "^2.9.9"
 django-environ = "^0.11.2"
 requests = "^2.31.0"
+boto3 = "^1.34.51"
+django-storages = "^1.14.2"
 
 [tool.poetry.dev-dependencies]
 
