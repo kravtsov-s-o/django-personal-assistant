@@ -157,7 +157,7 @@ class NotesByTagView(View):
 
     def get(self, request, tag_name, *args, **kwargs):
         notes = Note.objects.filter(tags__name=tag_name)
-        all_tags = Tag.objects.filter(user=request.user)
+        all_tags = Tag.objects.filter(user=request.user).annotate(num_notes=Count('notes')).order_by('-num_notes')[:10]
 
         # Пагінація
         paginator = Paginator(notes, self.items_per_page)

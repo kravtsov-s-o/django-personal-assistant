@@ -36,15 +36,13 @@
                             <td><a href="mailto:{{contact.email}}">{{contact.email}}</a></td>
                             <td>{{contact.address}}</td>
                             <td>{{ contact.birthday|date:"d.m.Y" }}</td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group" aria-label="Basic example">
+                            <td class="">
+                                <div class="d-flex gap-2">
                                     <a href="{% url 'contacts:edit_contact' pk=contact.pk %}"
                                         class="btn btn-outline-primary">Edit</a>
-                                    <form action="{% url 'contacts:delete_contact' pk=contact.pk %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-danger">Delete</button>
-                                    </form>
-                                </div>
+                                    <a href="{% url 'contacts:delete_contact' pk=contact.pk %}"
+                                        class="btn btn-outline-danger">Delete</a>
+                                    </div>
                             </td>
                         </tr>
                         {% endfor %}

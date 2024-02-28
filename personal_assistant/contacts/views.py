@@ -102,5 +102,16 @@ def edit_contact(request, pk):
 @login_required(login_url="/signin/")
 def delete_contact(request, pk):
     contact = get_object_or_404(Contact, pk=pk, user=request.user)
-    contact.delete()
-    return redirect("contacts:main")
+
+    if request.method == "POST":
+        contact.delete()
+        return redirect("contacts:main")
+
+    return render(
+        request,
+        "contacts/delete-contact.html",
+        {
+            "page_title": "Delete contact",
+            "contact": contact,
+        },
+    )
