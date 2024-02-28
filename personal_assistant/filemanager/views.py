@@ -1,6 +1,7 @@
-
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
@@ -11,6 +12,7 @@ from personal_assistant.settings import AWS_STORAGE_BUCKET_NAME as bucket_name
 from .forms import FileUploadForm, CategoryForm
 from .models import File
 from .models import Category
+
 
 @login_required(login_url='/signin/')
 def upload_file(request):
@@ -26,21 +28,65 @@ def upload_file(request):
                 if new_category:
                     # Створення нової категорії
                     category = Category.objects.create(name=new_category, user=request.user)
-                    file_instance.category = category   
+                    file_instance.category = category
             file_instance.save()
-            return redirect(to ='filemanager:uploaded_files')
+            return redirect(to='filemanager:uploaded_files')
     else:
         form = FileUploadForm(user=request.user)
-    
-    return render(request, 'filemanager/add_file.html', context={'form': form})
+
+    return render(request, 'filemanager/add_file.html', context={'page_title': 'Upload File', 'form': form})
+
 
 def uploaded_files(request):
     files = File.objects.filter(user=request.user)
-    return render(request, 'filemanager/uploaded_files.html', {'page_title':'Your uploaded files','files': files})
 
-def files_by_catogories(request, category_id):
+    if request.GET.get('search'):
+        query = request.GET.get('search')
+
+        files = files.filter(
+            Q(file__icontains=query)
+        )
+
+    items_per_page = 20
+    paginator = Paginator(files, items_per_page)
+
+    page = request.GET.get("page")
+
+    try:
+        files_page = paginator.page(page)
+    except PageNotAnInteger:
+        files_page = paginator.page(1)
+    except EmptyPage:
+        files_page = paginator.page(paginator.num_pages)
+
+    page_range = range(1, files_page.paginator.num_pages + 1)
+
+    categories = Category.objects.filter(user=request.user)
+    return render(request, 'filemanager/uploaded_files.html',
+                  {'page_title': 'Your uploaded files', 'files': files_page, 'categories': categories, "page_range": page_range})
+
+
+def files_by_categories(request, category_id):
     files = File.objects.filter(category_id=category_id)
-    return render(request, 'filemanager/uploaded_files.html', {'page_title': 'Your uploaded files by categories', 'files': files})
+
+    items_per_page = 20
+    paginator = Paginator(files, items_per_page)
+
+    page = request.GET.get("page")
+
+    try:
+        files_page = paginator.page(page)
+    except PageNotAnInteger:
+        files_page = paginator.page(1)
+    except EmptyPage:
+        files_page = paginator.page(paginator.num_pages)
+
+    page_range = range(1, files_page.paginator.num_pages + 1)
+
+    category = get_object_or_404(Category, pk=category_id)
+    categories = Category.objects.filter(user=request.user)
+    return render(request, 'filemanager/uploaded_files.html',
+                  {'page_title': f'Files by "{category.name}"', 'files': files_page, 'categories': categories, "page_range": page_range})
 
 
 def download_file(request, file_id):
@@ -53,16 +99,18 @@ def download_file(request, file_id):
     except FileNotFoundError:
         return HttpResponse("File not found", status=404)
 
+
 def edit_file(request, file_id):
     file_instance = get_object_or_404(File, pk=file_id)
     if request.method == 'POST':
         form = FileUploadForm(request.user, request.POST, request.FILES, instance=file_instance)
-        if form.is_valid(): 
+        if form.is_valid():
             form.save()
             return redirect('filemanager:uploaded_files')
     else:
         form = FileUploadForm(request.user, instance=file_instance)
-    return render(request, 'filemanager/edit_file.html', {'form': form})
+    return render(request, 'filemanager/add_file.html', {'page_title': 'Edit file', 'form': form, 'file': file_instance})
+
 
 def delete_file(request, pk):
     file_instance = get_object_or_404(File, pk=pk)
@@ -77,6 +125,7 @@ def delete_file(request, pk):
 
     return redirect('filemanager:uploaded_files')
 
+
 @login_required(login_url='/signin/')
 def create_category(request):
     if request.method == 'POST':
@@ -85,15 +134,18 @@ def create_category(request):
             category = form.save(commit=False)
             category.user = request.user
             category.save()
-            return redirect('filemanager:add_file')
+            return redirect('filemanager:uploaded_files')
     else:
         form = CategoryForm()
-    uncategorized, created = Category.objects.get_or_create(name='Без категорії', user=request.user, defaults={'name': 'Без категорії'})
-    return render(request, 'filemanager/create_category.html', {'form': form})
+    uncategorized, created = Category.objects.get_or_create(name='Без категорії', user=request.user,
+                                                            defaults={'name': 'Без категорії'})
+    return render(request, 'filemanager/create_category.html', {'page_title': 'Create Category', 'form': form})
+
 
 def manage_categories(request):
     categories = Category.objects.filter(user=request.user)
-    return render(request, 'filemanager/manage_categories.html', {'categories': categories})
+    return render(request, 'filemanager/manage_categories.html', {'page_title': 'Manage Categories', 'categories': categories})
+
 
 def edit_category(request, category_id):
     category = Category.objects.get(pk=category_id)
@@ -105,15 +157,13 @@ def edit_category(request, category_id):
     else:
         form = CategoryForm(instance=category)
 
-    return render(request, 'filemanager/edit_category.html', {'form': form})
+    return render(request, 'filemanager/create_category.html', {'page_title': 'Edit Category','category': category, 'form': form})
+
 
 def delete_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    uncategorized = Category.objects.get(name='Без категорії')
-    File.objects.filter(category=category).update(category=uncategorized)
+    uncategorized = Category.objects.filter(name='Без категорії', user=request.user).first()
+    files = File.objects.filter(category=category)
+    files.update(category=uncategorized)
     category.delete()
     return redirect('filemanager:manage_categories')
-
-def choose_category(request):
-    categories = Category.objects.filter(user=request.user)
-    return render(request, 'filemanager/choose_category.html', {'categories': categories})

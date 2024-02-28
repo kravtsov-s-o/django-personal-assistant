@@ -9,9 +9,7 @@
     </div>
     <div class="col text-end">
         <a href="{% url 'filemanager:add_file' %}" class="btn btn-primary">Add file</a>
-    </div>
-    <div class="col text-end">
-        <a href="{% url 'filemanager:choose_category' %}" class="btn btn-primary">Filter by category</a>
+        <a href="{% url 'filemanager:create_category' %}" class="btn btn-outline-secondary">Add Category</a>
     </div>
 </div>
 <div class="row">
@@ -21,9 +19,9 @@
                 <h2 class="h4 m-0">Search File</h2>
             </div>
             <div class="card-body">
-                <form action="#" method="get">
+                <form action="{% url 'filemanager:uploaded_files' %}" method="get">
                     <div class="d-flex gap-2">
-                        <input type="search" class="form-control" id="search" placeholder="File name">
+                        <input type="search" class="form-control" id="search" name="search" placeholder="File name">
                         <button class="btn btn-sm btn-primary" type="submit">Search</button>
                     </div>
                 </form>
@@ -31,19 +29,25 @@
         </div>
         <div class="card">
             <div class="card-header">
-                <h2 class="h4">Categories</h2>
+                <h2 class="h4 m-0">Categories</h2>
             </div>
             <div class="card-body">
                 <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                    <a href="{% url 'filemanager:uploaded_files' %}"
+                       class="list-group-item list-group-item-action {% if request.resolver_match.url_name != 'files_by_categories' %}active{% endif %}"
+                       aria-current="true">
                         All files
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action">Images</a>
-                    <a href="#" class="list-group-item list-group-item-action">Videos</a>
-                    <a href="#" class="list-group-item list-group-item-action">Audios</a>
-                    <a href="#" class="list-group-item list-group-item-action">Docs</a>
-                    <a href="#" class="list-group-item list-group-item-action">Other</a>
+                    {% for category in categories %}
+                    <a href="{% url 'filemanager:files_by_categories' category.id %}"
+                       class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'files_by_categories' and request.resolver_match.kwargs.category_id == category.id %} active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
                 </div>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-link p-0" href="{% url 'filemanager:manage_categories' %}">Manage Categories</a>
             </div>
         </div>
     </div>
@@ -63,15 +67,18 @@
 
                     {% for file in files %}
                     <tr>
-                        <td><a href="{% url 'filemanager:download_file' file.id %}" download="{{file.file.name}}">{{file.file.name}}</a></td>
+                        <td><a href="{% url 'filemanager:download_file' file.id %}" download="{{file.file.name}}">{{file.file.name}}</a>
+                        </td>
                         <td>{{file.category}}</td>
                         <td>
-                            <form action="{% url 'filemanager:delete_file' file.id %}" method="post"
-                                  style="display: inline;">
-                                {% csrf_token %}
-                                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                            </form>
-                            <a href="{% url 'filemanager:edit_file' file.id %}" class="btn btn-sm btn-primary">Edit</a>
+                            <div class="d-inline-flex gap-2">
+                                <a href="{% url 'filemanager:edit_file' file.id %}"
+                                   class="btn btn-sm btn-primary">Edit</a>
+                                <form action="{% url 'filemanager:delete_file' file.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -79,20 +86,31 @@
                     </tbody>
                 </table>
                 {% else %}
-                    <p class="h5 m-0">You don't have files. Upload one.</p>
+                <p class="h5 m-0">You don't have files. Upload one.</p>
                 {% endif %}
             </div>
+            {% if files.paginator.num_pages > 1 %}
             <div class="card-footer">
-                <nav aria-label="Page navigation">
+                <nav aria-label="Page navigation example">
                     <ul class="pagination m-0">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        {% if files.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ files.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+                        {% for number in page_range %}
+                        {% if number != files.number %}
+                        <li class="page-item"><a class="page-link" href="?page={{ number }}">{{ number }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link">{{ number }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if files.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ files.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

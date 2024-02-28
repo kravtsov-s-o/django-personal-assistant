@@ -15,6 +15,5 @@ urlpatterns = [
     path('category/manage/', views.manage_categories, name='manage_categories'),
     path('category/edit/<int:category_id>/', views.edit_category, name='edit_category'),
     path('category/delete/<int:category_id>/', views.delete_category, name='delete_category'),
-    path('file/view/<int:category_id>/', views.files_by_catogories, name='files_by_catogories'),
-    path('category/choose/', views.choose_category, name='choose_category'),
+    path('file/view/<int:category_id>/', views.files_by_categories, name='files_by_categories'),
 ] 
